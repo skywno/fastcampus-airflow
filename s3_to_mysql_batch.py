@@ -3,9 +3,7 @@ from airflow import DAG
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.providers.mysql.operators.mysql import MySqlOperator
 from airflow.providers.mysql.hooks.mysql import MySqlHook
-from airflow.operators.python_operator import PythonOperator
-
-from datetime import datetime, timedelta
+from airflow.operators.python import PythonOperator
 
 import pandas as pd
 import io
@@ -33,7 +31,7 @@ mysql_conn_id = 'mysql_conn'
 s3_conn_id = 'aws_default'
 
     
-def insert_s3_data_bulk(execution_date, **context):
+def insert_s3_data_bulk(execution_date):
     ds_nodash = execution_date.strftime('%Y%m%d%H')
     s3_hook = S3Hook(aws_conn_id=s3_conn_id)
     s3_prefix = f'api/upbit-api/year={ds_nodash[:4]}/month={ds_nodash[4:6]}/day={ds_nodash[6:8]}/hour={ds_nodash[8:10]}/'
@@ -77,5 +75,4 @@ with dag:
         task_id='load_s3_file_to_mysql',
         python_callable=insert_s3_data_bulk,
         queue="celery",
-        provide_context=True
     )
