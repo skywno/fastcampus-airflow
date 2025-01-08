@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
-from airflow.providers.mysql import SQLExecuteQueryOperator
 from airflow.providers.mysql.hooks.mysql import MySqlHook
 from airflow.operators.python import PythonOperator
 
@@ -38,7 +37,6 @@ def insert_s3_data_bulk(execution_date):
     s3_files = s3_hook.list_keys(bucket_name=s3_bucket_name, prefix = s3_prefix)
     
     print(f'Today is {ds_nodash}')
-
     print(s3_prefix)
     print(s3_files)
     
